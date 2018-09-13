@@ -55,14 +55,14 @@ func TestSplitBill(t *testing.T) {
 		money, ok := c.in.SplitEvenly()
 		if ok == nil {
 			if money != c.want.money {
-				t.Errorf("{%v}.evenSplit() == %v, want %v", c.in, money, c.want.money)
+				t.Errorf("{%v}.SplitEvenly() == %v, want %v", c.in, money, c.want.money)
 			}
 		}
 
 		people := c.in.GetPeople()
 
 		if !c.want.people.containsAll(people) {
-			t.Errorf("{%v}.getPeople() == %v, want %v", c.in, people, c.want.people)
+			t.Errorf("{%v}.GetPeople() == %v, want %v", c.in, people, c.want.people)
 		}
 	}
 }
