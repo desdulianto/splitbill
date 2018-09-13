@@ -67,6 +67,51 @@ func TestSplitBill(t *testing.T) {
 	}
 }
 
+func TestWithEmptyPeople(t *testing.T) {
+	bill := Bill{1000000, "", People{}}
+
+	_, ok := bill.SplitEvenly()
+	if ok == nil {
+		t.Errorf("{%v}.SplitEvenly() should error with %v", bill, "No people in group")
+	}
+
+	people := bill.GetPeople()
+	if people == nil || len(people) != 0 {
+		t.Errorf("{%v}.GetPeople() should return with empty list, got %v", bill, people)
+	}
+}
+
+func TestWithOnlyOnePerson(t *testing.T) {
+	cases := []struct {
+		in   Bill
+		want Want
+	}{
+		{
+			in:   Bill{100000, "A", People{"A"}},
+			want: Want{Money(100000), People{}},
+		},
+		{
+			in:   Bill{100000, "A", People{"B"}},
+			want: Want{Money(100000), People{"B"}},
+		},
+	}
+
+	for _, c := range cases {
+		money, err := c.in.SplitEvenly()
+		switch {
+		case err != nil:
+			t.Errorf("{%v}.SplitEvenly() should not error, got %v", c.in, err.Error())
+		case c.want.money != money:
+			t.Errorf("{%v}.SplitEvenly() should return %v, got %v", c.in, c.want.money, money)
+		}
+
+		people := c.in.GetPeople()
+		if !c.want.people.containsAll(people) {
+			t.Errorf("{%v}.GetPeople() should return %v, got %v", c.in, c.want.people, people)
+		}
+	}
+}
+
 func TestSplitBillError(t *testing.T) {
 	cases := []struct {
 		in   Bill
